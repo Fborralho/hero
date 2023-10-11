@@ -14,47 +14,31 @@ import java.io.IOException;
 import java.sql.SQLOutput;
 
 public class Game {
-    private int x = 10;
-    private int y = 10;
+    Hero hero = new Hero(new Position(10,10));
+    Arena arena = new Arena(10, 10, hero);
 
     public Game(){
     }
 
     private void processKey(KeyStroke key){
-        if(key.getKeyType() == KeyType.ArrowDown){
-            y +=  1;
-        }
-        if(key.getKeyType() == KeyType.ArrowUp){
-            y -= 1;
-        }
-        if(key.getKeyType() == KeyType.ArrowLeft){
-            x -= 1;
-        }
-        if(key.getKeyType() == KeyType.ArrowRight){
-            x += 1;
-        }
+        arena.processKey(key);
     }
-    private void draw () throws IOException{
 
-
-
-
-    }
 
     public void run() throws IOException {
-        TerminalSize terminalSize = new TerminalSize(40,20);
+        TerminalSize terminalSize = new TerminalSize(arena.getWidth(),arena.getHeight());
         DefaultTerminalFactory terminalFactory = new DefaultTerminalFactory().setInitialTerminalSize(terminalSize);
         Terminal terminal = new DefaultTerminalFactory().createTerminal();
         Screen screen = new TerminalScreen(terminal);
         screen.setCursorPosition(null);
         screen.startScreen();
         screen.doResizeIfNecessary();
-        screen.setCharacter(x,y, TextCharacter.fromCharacter('X')[0]);
+        arena.draw(screen);
         while(true){
             KeyStroke key = screen.readInput();
             screen.clear();
             processKey(key);
-            screen.setCharacter(x,y,TextCharacter.fromCharacter('X')[0]);
+            arena.draw(screen);
             screen.refresh();
 
             if(key.getKeyType() == KeyType.Character && key.getCharacter() == 'q'){
